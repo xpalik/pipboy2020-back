@@ -1,4 +1,4 @@
-from functions import check_ping, check_socket
+from functions import check_ping, check_snmp, check_socket
 
 
 class InitDevice:
@@ -25,7 +25,7 @@ class InitDevice:
             if 'tcp_port' in service[1]:
                 self.serivce_dict[service[0]]['status'] = check_socket(self.ip, service[1]['tcp_port'])
             if service[0] == 'snmp':
-                pass
+                self.serivce_dict[service[0]]['status'] = check_snmp(self.ip)
             if service[0] == 'ping':
                 self.serivce_dict[service[0]]['status'] = check_ping(self.ip)
             if 'status' in self.serivce_dict[service[0]]:
@@ -39,6 +39,6 @@ class InitDevice:
 
 
 a = InitDevice('192.168.105.3', telnet=True, snmp=False)
-#a.check_services()
+a.check_services()
 print('==')
 a.debug_print()
