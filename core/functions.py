@@ -40,7 +40,7 @@ def check_socket(ip, port):
 
 
 def snmp_get(ip, oid):
-    snmp_get_next(community_string, ip, port_snmp, oid)
+    return snmp_get_next(community_string, ip, port_snmp, oid)
 
 
 def check_snmp(ip):

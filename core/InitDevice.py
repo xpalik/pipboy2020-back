@@ -1,21 +1,25 @@
-from functions import check_ping, check_snmp, check_socket
-
+from functions import check_ping, check_snmp, check_socket, snmp_get
+import asyncio
+import time
 
 class InitDevice:
-    online = False
     serivce_dict = {
-        'ping': {'icmp': 0},
-        'telnet': {'tcp_port': 23},
-        'web': {'tcp_port': 80},
-        'winbox': {'tcp_port': 8291},
-        'ros_api': {'tcp_port': 8728},
-        'ssh': {'tcp_port': 22},
-        'snmp': {'snmp': 161}
+        'ping': {'icmp': 0, 'status': False},
+        'telnet': {'tcp_port': 23, 'status': False},
+        'web': {'tcp_port': 80, 'status': False},
+        'winbox': {'tcp_port': 8291, 'status': False},
+        'ros_api': {'tcp_port': 8728, 'status': False},
+        'ssh': {'tcp_port': 22, 'status': False},
+        'snmp': {'snmp': 161, 'status': False}
         }
 
     def __init__(self, ip, **kwargs):
         self.ip = ip
         self.online = False
+        if 'type' in kwargs:
+            self.type = kwargs['type']
+        else:
+            self.type = 'other'
         for service in self.serivce_dict.keys():
             if service in kwargs:
                 self.serivce_dict[service]['status'] = kwargs[service]
@@ -33,12 +37,14 @@ class InitDevice:
                     self.online = True
 
     def debug_print(self):
-        print("ip: %s, online: %s" % (self.ip, self.online))
+        print("ip: %s, type: %s, online: %s" % (self.ip, self.type, self.online))
         for service in self.serivce_dict.items():
             print(service)
 
 
-a = InitDevice('192.168.105.3', telnet=True, snmp=False)
+start_time = time.time()
+a = InitDevice('192.168.99.3')
 a.check_services()
-print('==')
 a.debug_print()
+
+print("--- %s seconds ---" % (time.time() - start_time))
