@@ -17,3 +17,7 @@ def check_socket(ip, port):
     else:
         sock_stream.close()
         return False
+
+
+def snmp_get(ip, oid):
+    pass

@@ -15,10 +15,10 @@ class InitDevice:
 
     def __init__(self, ip, **kwargs):
         self.ip = ip
-        self.online = check_ping(self.ip)
+        self.online = False
         for service in self.serivce_dict.keys():
             if service in kwargs:
-                self.serivce_dict[service[0]]['status'] = kwargs[service[0]]
+                self.serivce_dict[service]['status'] = kwargs[service]
 
     def check_services(self):
         for service in self.serivce_dict.items():
@@ -26,6 +26,11 @@ class InitDevice:
                 self.serivce_dict[service[0]]['status'] = check_socket(self.ip, service[1]['tcp_port'])
             if service[0] == 'snmp':
                 pass
+            if service[0] == 'ping':
+                self.serivce_dict[service[0]]['status'] = check_ping(self.ip)
+            if 'status' in self.serivce_dict[service[0]]:
+                if self.serivce_dict[service[0]]['status']:
+                    self.online = True
 
     def debug_print(self):
         print("ip: %s, online: %s" % (self.ip, self.online))
@@ -33,7 +38,7 @@ class InitDevice:
             print(service)
 
 
-a = InitDevice('192.168.105.3')
-a.check_services()
+a = InitDevice('192.168.105.3', telnet=True, snmp=False)
+#a.check_services()
 print('==')
 a.debug_print()
