@@ -89,3 +89,19 @@ def check_snmp(ip):
         return True
     else:
         return False
+
+
+def type_by_string(snmp_string):
+    if str(snmp_string)[0:8] == 'RouterOS':
+        return 'RouterOS'
+    elif str(snmp_string)[0:8] == 'DES-3200':
+        return 'DES3200C'
+    elif str(snmp_string)[0:15] == 'D-Link DES-3200':
+        return 'DES3200A'
+    elif str(snmp_string)[0:13] == 'DGS-3100-24TG':
+        return 'DGS310024TG'
+    elif str(snmp_string) != 'None':
+        return 'other'
+    else:
+        return 'other'
+
