@@ -43,7 +43,7 @@ class InitDevice:
 
 
 start_time = time.time()
-a = InitDevice('192.168.99.3')
+a = InitDevice('192.168.105.3')
 a.check_services()
 a.debug_print()
 
