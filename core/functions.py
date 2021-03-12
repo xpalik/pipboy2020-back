@@ -99,7 +99,7 @@ def type_by_string(snmp_string):
     elif str(snmp_string)[0:15] == 'D-Link DES-3200':
         return 'DES3200A'
     elif str(snmp_string)[0:13] == 'DGS-3100-24TG':
-        return 'DGS310024TG'
+        return 'DGS3100'
     elif str(snmp_string) != 'None':
         return 'other'
     else:
