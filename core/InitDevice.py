@@ -1,5 +1,7 @@
 from core.ServiceChecker import ServiceChecker
 from core.DES3200C import DES3200C
+from core.DES3200A import DES3200A
+from core.DGS3100 import DGS3100
 from core.functions import *
 
 
@@ -12,3 +14,7 @@ class InitDevice(ServiceChecker):
                 self.type = type_by_string(snmp_answer[1])
                 if self.type == 'DES3200C':
                     return DES3200C(self.ip, **self.serivces)
+                if self.type == 'DES3200A':
+                    return DES3200A(self.ip, **self.serivces)
+                if self.type == 'DGS3100':
+                    return DGS3100(self.ip, **self.serivces)
