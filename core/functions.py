@@ -1,6 +1,8 @@
 from pythonping import ping
 from pysnmp.hlapi import *
 import socket
+import routeros_api
+from accouts import RouterOSAccouts
 
 community_string = "public"
 port_snmp = 161
@@ -42,13 +44,13 @@ def snmp_walk(ip, root_oid):
     answer = []
     for errorIndication, errorStatus, \
         errorIndex, varBinds in bulkCmd(
-            SnmpEngine(),
-            CommunityData(community_string),
-            UdpTransportTarget((ip, port_snmp)),
-            ContextData(),
-            0, 50,  # GETBULK specific: request up to 50 OIDs in a single response
-            ObjectType(ObjectIdentity(root_oid)),
-            lookupMib=False, lexicographicMode=False):
+        SnmpEngine(),
+        CommunityData(community_string),
+        UdpTransportTarget((ip, port_snmp)),
+        ContextData(),
+        0, 50,  # GETBULK specific: request up to 50 OIDs in a single response
+        ObjectType(ObjectIdentity(root_oid)),
+        lookupMib=False, lexicographicMode=False):
 
         if errorIndication:
             print(ip, ' -> SNMP walk engine error: ', errorIndication)
@@ -105,3 +107,13 @@ def type_by_string(snmp_string):
     else:
         return 'other'
 
+
+def routeros_api_get_resource(ip, resource, call):
+    for username, password in RouterOSAccouts:
+        try:
+            connection = routeros_api.RouterOsApiPool(ip, username=username, password=password)
+            api = connection.get_api()
+            return api.get_resource(resource).call(call)
+        except routeros_api.exceptions.RouterOsApiCommunicationError:
+            pass
+    return False
