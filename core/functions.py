@@ -76,13 +76,22 @@ def check_ping(ip):
         return False
 
 
-async def check_socket(ip, port):
+async def check_socket_async(ip, port):
     try:
         reader, writer = await asyncio.open_connection(ip, port)
         writer.close()
-        print(reader, writer)
         return True
     except OSError:
+        return False
+
+
+def check_socket(ip, port):
+    sock_stream = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    if sock_stream.connect_ex((ip, port)) == 0:
+        sock_stream.close()
+        return True
+    else:
+        sock_stream.close()
         return False
 
 
