@@ -3,6 +3,7 @@ from device_classes.dlink_family.DES3200C import DES3200C
 from device_classes.dlink_family.DES3200A import DES3200A
 from device_classes.dlink_family.DGS3100 import DGS3100
 from device_classes.RouterOS import RouterOS
+from device_classes.Blunk import Blank
 from core.functions import *
 
 
@@ -21,3 +22,5 @@ class InitDevice(ServiceChecker):
                     return DGS3100(self.ip, **self.serivces)
                 if self.type == 'RouterOS':
                     return RouterOS(self.ip, **self.serivces)
+        else:
+            return Blank(self.ip, **self.serivces)

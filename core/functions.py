@@ -2,6 +2,7 @@ from pythonping import ping
 from pysnmp.hlapi import *
 import socket
 import routeros_api
+import asyncio
 from accouts import RouterOSAccouts
 
 community_string = "public"
@@ -75,14 +76,23 @@ def check_ping(ip):
         return False
 
 
-def check_socket(ip, port):
-    sock_stream = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    if sock_stream.connect_ex((ip, port)) == 0:
-        sock_stream.close()
+async def check_socket(ip, port):
+    try:
+        reader, writer = await asyncio.open_connection(ip, port)
+        writer.close()
+        print(reader, writer)
         return True
-    else:
-        sock_stream.close()
+    except OSError:
         return False
+
+# def check_socket_old(ip, port):
+#     sock_stream = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#     if sock_stream.connect_ex((ip, port)) == 0:
+#         sock_stream.close()
+#         return True
+#     else:
+#         sock_stream.close()
+#         return False
 
 
 def check_snmp(ip):
