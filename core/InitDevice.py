@@ -1,8 +1,8 @@
 from core.ServiceChecker import ServiceChecker
-from core.DES3200C import DES3200C
-from core.DES3200A import DES3200A
-from core.DGS3100 import DGS3100
-from core.RouterOS import RouterOS
+from device_classes.dlink_family.DES3200C import DES3200C
+from device_classes.dlink_family.DES3200A import DES3200A
+from device_classes.dlink_family.DGS3100 import DGS3100
+from device_classes.RouterOS import RouterOS
 from core.functions import *
 
 

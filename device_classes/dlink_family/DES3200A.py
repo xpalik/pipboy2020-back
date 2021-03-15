@@ -1,4 +1,4 @@
-from core.Dlink3200 import Dlink3200
+from device_classes.dlink_family.Dlink3200 import Dlink3200
 from core.functions import *
 
 

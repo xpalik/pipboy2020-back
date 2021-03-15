@@ -1,5 +1,4 @@
-from core.Dlink3200 import Dlink3200
-from core.functions import *
+from device_classes.dlink_family.Dlink3200 import Dlink3200
 
 
 class DGS3100(Dlink3200):
