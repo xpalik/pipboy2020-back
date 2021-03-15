@@ -3,7 +3,7 @@ from device_classes.dlink_family.DES3200C import DES3200C
 from device_classes.dlink_family.DES3200A import DES3200A
 from device_classes.dlink_family.DGS3100 import DGS3100
 from device_classes.RouterOS import RouterOS
-from device_classes.Blunk import Blank
+from device_classes.Blank import Blank
 from core.functions import *
 
 
