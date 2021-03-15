@@ -20,12 +20,12 @@ class ServiceChecker:
         else:
             self.type = 'other'
         self.serivces = {
-            'ping': False,
             'telnet': False,
             'web': False,
             'winbox': False,
             'ros_api': False,
             'ssh': False,
+            'ping': False,
             'snmp': False
         }
         for service in self.serivces.keys():
@@ -49,14 +49,19 @@ class ServiceChecker:
                         return True
         return False
 
-    def check_services(self):
+    async def check_services(self):
+        tasks = []
         for service in self.serivces.keys():
             if ServiceChecker.service_tcp_ports[service]:
-                self.serivces[service] = check_socket(self.ip, ServiceChecker.service_tcp_ports[service])
+                tasks.append([service,
+                              asyncio.create_task(check_socket(self.ip, ServiceChecker.service_tcp_ports[service]))])
+                # self.serivces[service] = check_socket(self.ip, ServiceChecker.service_tcp_ports[service])
             if service == 'snmp':
                 self.serivces[service] = check_snmp(self.ip)
             if service == 'ping':
                 self.serivces[service] = check_ping(self.ip)
+        for task in tasks:
+            self.serivces[task[0]] = await task[1]
 
     def debug_print(self):
         print('=====')
