@@ -85,15 +85,6 @@ async def check_socket(ip, port):
     except OSError:
         return False
 
-# def check_socket_old(ip, port):
-#     sock_stream = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#     if sock_stream.connect_ex((ip, port)) == 0:
-#         sock_stream.close()
-#         return True
-#     else:
-#         sock_stream.close()
-#         return False
-
 
 def check_snmp(ip):
     answer = snmp_get(ip, '.1.3.6.1.2.1.1.1.0')
