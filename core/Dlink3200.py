@@ -47,12 +47,12 @@ class Dlink3200(ServiceChecker):
             snmp_type = snmp_walk(self.ip, '.1.3.6.1.2.1.4.22.1.4')
             for i in range(0, len(snmp_macs) - 1):
                 mac = snmp_macs[i][1].split('x')[-1]
-                self.arp_entry.append([
-                    snmp_interface[i][1],
-                    mac,
-                    snmp_ips[i][1],
-                    snmp_type[i][1]
-                ])
+                if snmp_type[i][1] == '3':
+                    self.arp_entry.append([
+                        snmp_interface[i][1],
+                        mac,
+                        snmp_ips[i][1]
+                    ])
 
     def check_route_table(self):
         if self.is_online():
@@ -78,7 +78,7 @@ class Dlink3200(ServiceChecker):
         print('== DES3200 - properties')
         for prop in self.properties.items():
             print(prop)
-        # for item in self.mac_table:
-        #     print(item)
+        for item in self.mac_table:
+            print(item)
         for item in self.arp_entry:
             print(item)

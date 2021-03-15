@@ -2,6 +2,7 @@ from core.ServiceChecker import ServiceChecker
 from core.DES3200C import DES3200C
 from core.DES3200A import DES3200A
 from core.DGS3100 import DGS3100
+from core.RouterOS import RouterOS
 from core.functions import *
 
 
@@ -18,3 +19,5 @@ class InitDevice(ServiceChecker):
                     return DES3200A(self.ip, **self.serivces)
                 if self.type == 'DGS3100':
                     return DGS3100(self.ip, **self.serivces)
+                if self.type == 'RouterOS':
+                    return RouterOS(self.ip, **self.serivces)
