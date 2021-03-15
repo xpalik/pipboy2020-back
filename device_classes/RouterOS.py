@@ -1,14 +1,11 @@
-from core.ServiceChecker import ServiceChecker
+from core.DataClass import DataClass
 from core.functions import *
 
 
-class RouterOS(ServiceChecker):
+class RouterOS(DataClass):
     def __init__(self, ip, **kwargs):
         super().__init__(ip, **kwargs)
         self.type = 'RouterOS'
-        self.properties = {}
-        self.mac_table = []
-        self.arp_entry = []
 
     def check_all_snmp_properties(self):
         self.check_sntp()
@@ -53,13 +50,3 @@ class RouterOS(ServiceChecker):
         for item in answer:
             if 'bundle' not in item:
                 self.properties[resource + '/' + item['name']] = item['version']
-
-    def debug_print(self):
-        super().debug_print()
-        print('== RouterOS - properties')
-        for prop in self.properties.items():
-            print(prop)
-        # for item in self.mac_table:
-        #     print(item)
-        # for item in self.arp_entry:
-        #     print(item)

@@ -14,4 +14,3 @@ class DES3200C(Dlink3200):
     def check_firmware(self):
         if self.is_online():
             self.properties['firmware'] = snmp_get(self.ip, '.1.3.6.1.4.1.171.12.1.2.7.1.2.1')[1]
-

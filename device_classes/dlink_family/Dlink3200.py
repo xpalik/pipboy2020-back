@@ -1,14 +1,11 @@
-from core.ServiceChecker import ServiceChecker
+from core.DataClass import DataClass
 from core.functions import *
 import time
 
 
-class Dlink3200(ServiceChecker):
+class Dlink3200(DataClass):
     def __init__(self, ip, **kwargs):
         super().__init__(ip, **kwargs)
-        self.properties = {}
-        self.mac_table = []
-        self.arp_entry = []
 
     def check_all_snmp_properties(self):
         self.properties['snmp_name'] = snmp_get(self.ip, '.1.3.6.1.2.1.1.1.0')[1]
@@ -72,13 +69,3 @@ class Dlink3200(ServiceChecker):
         except KeyError:
             self.properties['root_port'] = False
             self.properties['root_vlan'] = False
-
-    def debug_print(self):
-        super().debug_print()
-        print('== DES3200 - properties')
-        for prop in self.properties.items():
-            print(prop)
-        for item in self.mac_table:
-            print(item)
-        for item in self.arp_entry:
-            print(item)
