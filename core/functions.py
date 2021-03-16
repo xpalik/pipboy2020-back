@@ -3,12 +3,23 @@ from pysnmp.hlapi import *
 import socket
 import routeros_api
 import asyncio
+import aioping
+import aiosnmp
 from accouts import RouterOSAccouts
 
 community_string = "public"
 port_snmp = 161
 OID_sysName = ''
 deviceOptions = {}
+
+
+async def snmp_get_async(ip, oid):
+    try:
+        async with aiosnmp.Snmp(host=ip, port=port_snmp, community=community_string) as snmp:
+            for res in await snmp.get(oid):
+                return [res.oid, str(res.value).split('\'')[1]]
+    except aiosnmp.exceptions.SnmpTimeoutError:
+        return None
 
 
 def snmp_get(ip, oid):
@@ -25,18 +36,18 @@ def snmp_get(ip, oid):
     error_indication, error_status, error_index, var_binds = next(iterator)
 
     if error_indication:  # SNMP engine errors
-        print(ip, ' -> SNMP engine error: ', error_indication)
-        return None
+        # print(ip, ' -> SNMP engine error: ', error_indication)
+        return [oid, None]
     else:
         if error_status:  # SNMP agent errors
-            print(
-                ' -> %s at %s' % (error_status.prettyPrint(), var_binds[int(error_index) - 1] if error_index else '?'))
-            return None
+            # print(
+            #     ' -> %s at %s' % (error_status.prettyPrint(), var_binds[int(error_index) - 1] if error_index else '?'))
+            return [oid, None]
         else:
             for varBind in var_binds:  # SNMP response contents
                 answer = [x.prettyPrint() for x in varBind]
                 if answer[1] == 'No Such Object currently exists at this OID':
-                    return None
+                    return [oid, None]
                 else:
                     return answer
 
@@ -54,11 +65,11 @@ def snmp_walk(ip, root_oid):
         lookupMib=False, lexicographicMode=False):
 
         if errorIndication:
-            print(ip, ' -> SNMP walk engine error: ', errorIndication)
+            # print(ip, ' -> SNMP walk engine error: ', errorIndication)
             break
         elif errorStatus:
-            print(' -> %s at %s' % (errorStatus.prettyPrint(),
-                                    errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
+            # print(' -> %s at %s' % (errorStatus.prettyPrint(),
+            #                         errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
             break
         else:
             for varBind in varBinds:
@@ -67,6 +78,14 @@ def snmp_walk(ip, root_oid):
         return None
     else:
         return answer
+
+
+async def check_ping_async(ip):
+    try:
+        delay = await aioping.ping(ip)
+        return True
+    except TimeoutError:
+        return False
 
 
 def check_ping(ip):
@@ -92,6 +111,14 @@ def check_socket(ip, port):
         return True
     else:
         sock_stream.close()
+        return False
+
+
+async def check_snmp_async(ip):
+    answer = await snmp_get_async(ip, '.1.3.6.1.2.1.1.1.0')
+    if answer is not None:
+        return True
+    else:
         return False
 
 

@@ -5,11 +5,11 @@ import asyncio
 if __name__ == '__main__':
     start_time = time.time()
     a = InitDevice('192.168.103.88')
-    # a = InitDevice('192.168.103.245', snmp=True)
+    # a = InitDevice('192.168.103.245')
     print(a.serivces)
-    a = a.type_define()
+    # a = a.type_define()
     asyncio.run(a.check_services())
-    a.check_all_snmp_properties()
+    # a.check_all_snmp_properties()
     a.debug_print()
 
     
