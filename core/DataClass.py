@@ -10,7 +10,7 @@ class DataClass(ServiceChecker):
 
     def debug_print(self):
         super().debug_print()
-        print('== DataClass debug - properties')
+        print('==> properties')
         for prop in self.properties.items():
             print(prop)
         i = 0
