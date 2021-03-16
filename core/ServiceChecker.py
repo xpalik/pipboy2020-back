@@ -20,12 +20,12 @@ class ServiceChecker:
         else:
             self.type = 'other'
         self.serivces = {
+            'ping': False,
             'telnet': False,
             'web': False,
             'winbox': False,
             'ros_api': False,
             'ssh': False,
-            'ping': False,
             'snmp': False
         }
         for service in self.serivces.keys():
@@ -59,7 +59,9 @@ class ServiceChecker:
             if service == 'snmp':
                 self.serivces[service] = check_snmp(self.ip)
             if service == 'ping':
-                self.serivces[service] = check_ping(self.ip)
+                tasks.append([service,
+                              check_ping_async(self.ip)])
+                # self.serivces[service] = check_ping_async(self.ip)
         for task in tasks:
             self.serivces[task[0]] = await task[1]
 

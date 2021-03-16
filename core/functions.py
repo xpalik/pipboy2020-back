@@ -3,12 +3,21 @@ from pysnmp.hlapi import *
 import socket
 import routeros_api
 import asyncio
+import aioping
+import aiosnmp
 from accouts import RouterOSAccouts
 
 community_string = "public"
 port_snmp = 161
 OID_sysName = ''
 deviceOptions = {}
+
+
+async def snmp_get_async(ip, oid):
+    async with aiosnmp.Snmp(host=ip, port=port_snmp, community=community_string) as snmp:
+        for res in await snmp.get(oid):
+            print(res.oid, res.value)
+            return [res.oid, res.value]
 
 
 def snmp_get(ip, oid):
@@ -69,6 +78,17 @@ def snmp_walk(ip, root_oid):
         return answer
 
 
+async def check_ping_async(ip):
+    print('---> async ping ', ip)
+    try:
+        delay = await aioping.ping(ip)
+        print("===> Ping response in %s ms " % delay, ip)
+        return True
+    except TimeoutError:
+        print("===> Ping no response ", ip)
+        return False
+
+
 def check_ping(ip):
     if ping(ip).success():
         return True
@@ -77,11 +97,14 @@ def check_ping(ip):
 
 
 async def check_socket_async(ip, port):
+    print('---> async socket ', port, ip)
     try:
         reader, writer = await asyncio.open_connection(ip, port)
         writer.close()
+        print('===> async socket success', port, ip)
         return True
     except OSError:
+        print('===> async socket timeout', port, ip)
         return False
 
 
@@ -92,6 +115,14 @@ def check_socket(ip, port):
         return True
     else:
         sock_stream.close()
+        return False
+
+
+async def check_snmp_async(ip):
+    answer = snmp_get_async(ip, '.1.3.6.1.2.1.1.1.0')
+    if answer is not None:
+        return True
+    else:
         return False
 
 
