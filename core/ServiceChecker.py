@@ -57,11 +57,11 @@ class ServiceChecker:
                               asyncio.create_task(
                                   check_socket_async(self.ip, ServiceChecker.service_tcp_ports[service]))])
             if service == 'snmp':
-                self.serivces[service] = check_snmp(self.ip)
+                tasks.append([service,
+                              asyncio.create_task(check_snmp_async(self.ip))])
             if service == 'ping':
                 tasks.append([service,
                               check_ping_async(self.ip)])
-                # self.serivces[service] = check_ping_async(self.ip)
         for task in tasks:
             self.serivces[task[0]] = await task[1]
 

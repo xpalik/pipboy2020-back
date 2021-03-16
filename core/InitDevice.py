@@ -16,11 +16,15 @@ class InitDevice(ServiceChecker):
                 self.type = type_by_string(snmp_answer[1])
                 if self.type == 'DES3200C':
                     return DES3200C(self.ip, **self.serivces)
-                if self.type == 'DES3200A':
+                elif self.type == 'DES3200A':
                     return DES3200A(self.ip, **self.serivces)
-                if self.type == 'DGS3100':
+                elif self.type == 'DGS3100':
                     return DGS3100(self.ip, **self.serivces)
-                if self.type == 'RouterOS':
+                elif self.type == 'RouterOS':
                     return RouterOS(self.ip, **self.serivces)
+                else:
+                    self.type == 'Blank'
+                    return Blank(self.ip, **self.serivces)
         else:
+            self.type == 'Blank'
             return Blank(self.ip, **self.serivces)
