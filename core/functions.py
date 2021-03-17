@@ -153,4 +153,6 @@ def routeros_api_get_resource(ip, resource, call):
             return api.get_resource(resource).call(call)
         except routeros_api.exceptions.RouterOsApiCommunicationError:
             pass
+        except ConnectionRefusedError:
+            pass
     return False

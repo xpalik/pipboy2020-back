@@ -16,27 +16,30 @@ class RouterOS(DataClass):
         self.find_root_port()
 
     def check_sntp(self):
-        resource = '/system/ntp/client'
-        answer = routeros_api_get_resource(self.ip, resource, 'print')
-        for prop in answer[0].items():
-            self.properties[resource + '/' + prop[0]] = prop[1]
+        if self.serivces['ros_api']:
+            resource = '/system/ntp/client'
+            answer = routeros_api_get_resource(self.ip, resource, 'print')
+            for prop in answer[0].items():
+                self.properties[resource + '/' + prop[0]] = prop[1]
 
     def check_fdb_table(self):
-        answer = routeros_api_get_resource(self.ip, '/interface/bridge/host', 'print')
-        for item in answer:
-            self.mac_table.append([
-                item['bridge'],
-                ''.join(item['mac-address'].lower().split(':')),
-                item['on-interface']
-            ])
+        if self.serivces['ros_api']:
+            answer = routeros_api_get_resource(self.ip, '/interface/bridge/host', 'print')
+            for item in answer:
+                self.mac_table.append([
+                    item['bridge'],
+                    ''.join(item['mac-address'].lower().split(':')),
+                    item['on-interface']
+                ])
 
     def check_arp_table(self):
-        answer = routeros_api_get_resource(self.ip, '/ip/arp', 'print')
-        for item in answer:
-            self.arp_entry.append([
-                item['interface'],
-                ''.join(item['mac-address'].lower().split(':')),
-                item['address']])
+        if self.serivces['ros_api']:
+            answer = routeros_api_get_resource(self.ip, '/ip/arp', 'print')
+            for item in answer:
+                self.arp_entry.append([
+                    item['interface'],
+                    ''.join(item['mac-address'].lower().split(':')),
+                    item['address']])
 
     def check_route_table(self):
         pass
@@ -45,8 +48,9 @@ class RouterOS(DataClass):
         pass
 
     def check_firmware(self):
-        resource = '/system/package'
-        answer = routeros_api_get_resource(self.ip, resource, 'print')
-        for item in answer:
-            if 'bundle' not in item:
-                self.properties[resource + '/' + item['name']] = item['version']
+        if self.serivces['ros_api']:
+            resource = '/system/package'
+            answer = routeros_api_get_resource(self.ip, resource, 'print')
+            for item in answer:
+                if 'bundle' not in item:
+                    self.properties[resource + '/' + item['name']] = item['version']
