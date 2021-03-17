@@ -150,6 +150,7 @@ def routeros_api_get_resource(ip, resource, call):
         try:
             connection = routeros_api.RouterOsApiPool(ip, username=username, password=password)
             api = connection.get_api()
+            print(api.get_resource(resource).call(call))
             return api.get_resource(resource).call(call)
         except routeros_api.exceptions.RouterOsApiCommunicationError:
             pass

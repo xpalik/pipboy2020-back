@@ -3,7 +3,8 @@ import time
 from core.InitDevice import InitDevice
 import asyncio
 
-subnets_array = [ipaddress.ip_network('192.168.136.199/32')
+subnets_array = [ipaddress.ip_network('192.168.136.192/28')
+# subnets_array = [ipaddress.ip_network('192.168.136.202/32')
                  ]
 
 
