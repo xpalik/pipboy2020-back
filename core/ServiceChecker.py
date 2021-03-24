@@ -61,7 +61,7 @@ class ServiceChecker:
                               asyncio.create_task(check_snmp_async(self.ip))])
             if service == 'ping':
                 tasks.append([service,
-                              check_ping_async(self.ip)])
+                              asyncio.create_task(check_ping_async(self.ip))])
         for task in tasks:
             self.serivces[task[0]] = await task[1]
 
