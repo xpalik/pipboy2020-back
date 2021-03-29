@@ -275,3 +275,33 @@ def mssql_update_arp(ip, update_array):
             row[2]
         ))
     cursor.commit()
+
+
+def mssql_select_fdb(ip):
+    sql_con = pyodbc.connect(
+        'DRIVER={SQL Server};'
+        'SERVER=' + accouts.sql_set['server'] +
+        ';DATABASE=' + accouts.sql_set['database']
+    )
+    cursor = sql_con.cursor()
+    cursor.execute("""SELECT * FROM dbo.device_fdb WHERE ip = '%s'""" % (ip))
+    sql_result = cursor.fetchall()
+    result = []
+    for item in sql_result:
+        result.append([item[1], item[2], item[3]])
+    return result
+
+
+def mssql_select_arp(ip):
+    sql_con = pyodbc.connect(
+        'DRIVER={SQL Server};'
+        'SERVER=' + accouts.sql_set['server'] +
+        ';DATABASE=' + accouts.sql_set['database']
+    )
+    cursor = sql_con.cursor()
+    cursor.execute("""SELECT * FROM dbo.device_arp WHERE ip = '%s'""" % (ip))
+    sql_result = cursor.fetchall()
+    result = []
+    for item in sql_result:
+        result.append([item[1], item[2], item[3]])
+    return result
