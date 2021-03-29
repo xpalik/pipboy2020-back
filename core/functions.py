@@ -207,3 +207,71 @@ def mssql_select_dict(sql_table, ip):
     for item in sql_result:
         result[item[2]] = item[3]
     return result
+
+
+def mssql_update_fdb(ip, update_array):
+    sql_con = pyodbc.connect(
+        'DRIVER={SQL Server};'
+        'SERVER=' + accouts.sql_set['server'] +
+        ';DATABASE=' + accouts.sql_set['database']
+    )
+    cursor = sql_con.cursor()
+    for row in update_array:
+        cursor.execute("""
+                           IF (NOT EXISTS(SELECT * FROM dbo.device_fdb WHERE ip = '%s' AND vlanid = '%s' AND mac = '%s'))
+                           BEGIN
+                               INSERT INTO dbo.device_fdb(ip, vlanid, mac, port)
+                               VALUES('%s', '%s', '%s', %s)
+                           END
+                           ELSE
+                           BEGIN
+                               UPDATE dbo.device_fdb
+                               SET port = '%s'
+                               WHERE ip = '%s' AND vlanid = '%s' AND mac = '%s'
+                           END""" % (
+            ip,
+            row[0],
+            row[1],
+            ip,
+            row[0],
+            row[1],
+            row[2],
+            row[2],
+            ip,
+            row[0],
+            row[1]
+        ))
+    cursor.commit()
+
+
+def mssql_update_arp(ip, update_array):
+    sql_con = pyodbc.connect(
+        'DRIVER={SQL Server};'
+        'SERVER=' + accouts.sql_set['server'] +
+        ';DATABASE=' + accouts.sql_set['database']
+    )
+    cursor = sql_con.cursor()
+    for row in update_array:
+        cursor.execute("""
+                           IF (NOT EXISTS(SELECT * FROM dbo.device_arp WHERE ip = '%s' AND arp_ip = '%s'))
+                           BEGIN
+                               INSERT INTO dbo.device_arp(ip, arp_interface, arp_mac, arp_ip)
+                               VALUES('%s', '%s', '%s', '%s')
+                           END
+                           ELSE
+                           BEGIN
+                               UPDATE dbo.device_arp
+                               SET arp_mac = '%s'
+                               WHERE ip = '%s' AND arp_ip = '%s'
+                           END""" % (
+            ip,
+            row[2],
+            ip,
+            row[0],
+            row[1],
+            row[2],
+            row[1],
+            ip,
+            row[2]
+        ))
+    cursor.commit()

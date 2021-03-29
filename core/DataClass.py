@@ -1,5 +1,5 @@
 from core.ServiceChecker import ServiceChecker
-from core.functions import mssql_update_dict, mssql_select_dict
+from core.functions import mssql_update_dict, mssql_select_dict, mssql_update_fdb, mssql_update_arp
 import pyodbc
 import accouts
 
@@ -35,6 +35,8 @@ class DataClass(ServiceChecker):
         super(DataClass, self).mssql_update()
         if self.online:
             mssql_update_dict('device_properties', self.ip, self.properties)
+            mssql_update_fdb(self.ip, self.mac_table)
+            mssql_update_arp(self.ip, self.arp_entry)
 
     def mssql_select(self):
         self.properties.update(mssql_select_dict('device_properties', self.ip))
