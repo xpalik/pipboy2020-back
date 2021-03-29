@@ -5,6 +5,8 @@ import routeros_api
 import asyncio
 import aioping
 import aiosnmp
+import pyodbc
+import accouts
 from accouts import RouterOSAccouts
 
 community_string = "public"
@@ -156,3 +158,150 @@ def routeros_api_get_resource(ip, resource, call):
         except ConnectionRefusedError:
             pass
     return False
+
+
+def mssql_update_dict(sql_table, ip, update_dict):
+    sql_con = pyodbc.connect(
+        'DRIVER={SQL Server};'
+        'SERVER=' + accouts.sql_set['server'] +
+        ';DATABASE=' + accouts.sql_set['database']
+    )
+    cursor = sql_con.cursor()
+    for item in update_dict.items():
+        cursor.execute("""
+                           IF (NOT EXISTS(SELECT * FROM dbo.%s WHERE ip = '%s' AND property = '%s'))
+                           BEGIN
+                               INSERT INTO dbo.%s(ip, property, property_state)
+                               VALUES('%s', '%s', '%s')
+                           END
+                           ELSE
+                           BEGIN
+                               UPDATE dbo.%s
+                               SET property_state = '%s'
+                               WHERE ip = '%s' AND property = '%s'
+                           END""" % (sql_table,
+                                     ip,
+                                     item[0],
+                                     sql_table,
+                                     ip,
+                                     item[0],
+                                     item[1],
+                                     sql_table,
+                                     item[1],
+                                     ip,
+                                     item[0]))
+
+    cursor.commit()
+
+
+def mssql_select_dict(sql_table, ip):
+    sql_con = pyodbc.connect(
+        'DRIVER={SQL Server};'
+        'SERVER=' + accouts.sql_set['server'] +
+        ';DATABASE=' + accouts.sql_set['database']
+    )
+    cursor = sql_con.cursor()
+    cursor.execute("""SELECT * FROM dbo.%s WHERE ip = '%s'""" % (sql_table, ip))
+    sql_result = cursor.fetchall()
+    result = {}
+    for item in sql_result:
+        result[item[2]] = item[3]
+    return result
+
+
+def mssql_update_fdb(ip, update_array):
+    sql_con = pyodbc.connect(
+        'DRIVER={SQL Server};'
+        'SERVER=' + accouts.sql_set['server'] +
+        ';DATABASE=' + accouts.sql_set['database']
+    )
+    cursor = sql_con.cursor()
+    for row in update_array:
+        cursor.execute("""
+                           IF (NOT EXISTS(SELECT * FROM dbo.device_fdb WHERE ip = '%s' AND vlanid = '%s' AND mac = '%s'))
+                           BEGIN
+                               INSERT INTO dbo.device_fdb(ip, vlanid, mac, port)
+                               VALUES('%s', '%s', '%s', '%s')
+                           END
+                           ELSE
+                           BEGIN
+                               UPDATE dbo.device_fdb
+                               SET port = '%s'
+                               WHERE ip = '%s' AND vlanid = '%s' AND mac = '%s'
+                           END""" % (
+            ip,
+            row[0],
+            row[1],
+            ip,
+            row[0],
+            row[1],
+            row[2],
+            row[2],
+            ip,
+            row[0],
+            row[1]
+        ))
+    cursor.commit()
+
+
+def mssql_update_arp(ip, update_array):
+    sql_con = pyodbc.connect(
+        'DRIVER={SQL Server};'
+        'SERVER=' + accouts.sql_set['server'] +
+        ';DATABASE=' + accouts.sql_set['database']
+    )
+    cursor = sql_con.cursor()
+    for row in update_array:
+        cursor.execute("""
+                           IF (NOT EXISTS(SELECT * FROM dbo.device_arp WHERE ip = '%s' AND arp_ip = '%s'))
+                           BEGIN
+                               INSERT INTO dbo.device_arp(ip, arp_interface, arp_mac, arp_ip)
+                               VALUES('%s', '%s', '%s', '%s')
+                           END
+                           ELSE
+                           BEGIN
+                               UPDATE dbo.device_arp
+                               SET arp_mac = '%s'
+                               WHERE ip = '%s' AND arp_ip = '%s'
+                           END""" % (
+            ip,
+            row[2],
+            ip,
+            row[0],
+            row[1],
+            row[2],
+            row[1],
+            ip,
+            row[2]
+        ))
+    cursor.commit()
+
+
+def mssql_select_fdb(ip):
+    sql_con = pyodbc.connect(
+        'DRIVER={SQL Server};'
+        'SERVER=' + accouts.sql_set['server'] +
+        ';DATABASE=' + accouts.sql_set['database']
+    )
+    cursor = sql_con.cursor()
+    cursor.execute("""SELECT * FROM dbo.device_fdb WHERE ip = '%s'""" % (ip))
+    sql_result = cursor.fetchall()
+    result = []
+    for item in sql_result:
+        result.append([item[1], item[2], item[3]])
+    return result
+
+
+def mssql_select_arp(ip):
+    sql_con = pyodbc.connect(
+        'DRIVER={SQL Server};'
+        'SERVER=' + accouts.sql_set['server'] +
+        ';DATABASE=' + accouts.sql_set['database']
+    )
+    cursor = sql_con.cursor()
+    cursor.execute("""SELECT * FROM dbo.device_arp WHERE ip = '%s'""" % (ip))
+    sql_result = cursor.fetchall()
+    result = []
+    for item in sql_result:
+        result.append([item[1], item[2], item[3]])
+    return result

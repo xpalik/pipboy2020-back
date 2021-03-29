@@ -1,4 +1,6 @@
 from core.functions import *
+import accouts
+import pyodbc
 
 
 class ServiceChecker:
@@ -64,6 +66,13 @@ class ServiceChecker:
                               asyncio.create_task(check_ping_async(self.ip))])
         for task in tasks:
             self.serivces[task[0]] = await task[1]
+
+    def mssql_update(self):
+        if self.online:
+            mssql_update_dict('services', self.ip, self.serivces)
+
+    def mssql_select(self):
+        self.serivces.update(mssql_select_dict('serivces', self.ip))
 
     def debug_print(self):
         print('==================================')
