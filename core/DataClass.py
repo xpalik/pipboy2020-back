@@ -1,4 +1,7 @@
 from core.ServiceChecker import ServiceChecker
+from core.functions import mssql_update_dict, mssql_select_dict
+import pyodbc
+import accouts
 
 
 class DataClass(ServiceChecker):
@@ -27,3 +30,11 @@ class DataClass(ServiceChecker):
             if i > 5:
                 print('and more...')
                 break
+
+    def mssql_update(self):
+        super(DataClass, self).mssql_update()
+        if self.online:
+            mssql_update_dict('device_properties', self.ip, self.properties)
+
+    def mssql_select(self):
+        self.properties.update(mssql_select_dict('device_properties', self.ip))

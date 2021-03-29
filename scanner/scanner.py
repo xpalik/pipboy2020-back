@@ -3,7 +3,7 @@ import time
 from core.InitDevice import InitDevice
 import asyncio
 
-subnets_array = [ipaddress.ip_network('192.168.104.0/22')
+subnets_array = [ipaddress.ip_network('192.168.107.0/28')
                  ]
 
 
@@ -24,6 +24,7 @@ async def scanner():
         item = item.type_define()
         item.check_all_snmp_properties()
         item.debug_print()
+        item.mssql_update()
 
 
 start_time = time.time()
