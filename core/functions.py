@@ -221,7 +221,7 @@ def mssql_update_fdb(ip, update_array):
                            IF (NOT EXISTS(SELECT * FROM dbo.device_fdb WHERE ip = '%s' AND vlanid = '%s' AND mac = '%s'))
                            BEGIN
                                INSERT INTO dbo.device_fdb(ip, vlanid, mac, port)
-                               VALUES('%s', '%s', '%s', %s)
+                               VALUES('%s', '%s', '%s', '%s')
                            END
                            ELSE
                            BEGIN
