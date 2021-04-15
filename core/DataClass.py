@@ -6,8 +6,16 @@ class DataClass(ServiceChecker):
     def __init__(self, ip, **kwargs):
         super().__init__(ip, **kwargs)
         self.properties = {}
+        # {'system_ntp': '192.168.200.1',
+        # 'property_name': 'property_value'}
         self.mac_table = []
+        # [['10', '00238b7b1dc4', '26'],
+        # ['vlanid', 'mac', 'port']]
         self.arp_entry = []
+        # [['5121', '84b2610b22c1', '192.168.105.254'],
+        # ['arp_interface', 'arp_mac', 'arp_ip']]
+
+
 
     def debug_print(self):
         super().debug_print()

@@ -46,9 +46,9 @@ class Dlink3200(DataClass):
                 mac = snmp_macs[i][1].split('x')[-1]
                 if snmp_type[i][1] == '3':
                     self.arp_entry.append([
-                        snmp_interface[i][1],
-                        mac,
-                        snmp_ips[i][1]
+                        snmp_interface[i][1][0:99],
+                        mac[0:11],
+                        snmp_ips[i][1][0:14]
                     ])
 
     def check_route_table(self):

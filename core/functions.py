@@ -141,6 +141,8 @@ def type_by_string(snmp_string):
         return 'DES3200A'
     elif str(snmp_string)[0:13] == 'DGS-3100-24TG':
         return 'DGS3100'
+    elif str(snmp_string)[0:14] == '0x436973636f20':
+        return 'Cisco'
     elif str(snmp_string) != 'None':
         return 'other'
     else:
